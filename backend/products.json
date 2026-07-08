@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "name": "Wireless Mouse",
+    "description": "A smooth wireless mouse for daily office and study use.",
+    "price": 499,
+    "category": "Electronics",
+    "stock": 20,
+    "image": "https://via.placeholder.com/300x220?text=Wireless+Mouse"
+  },
+  {
+    "id": 2,
+    "name": "Bluetooth Headphones",
+    "description": "Comfortable wireless headphones with clear sound.",
+    "price": 1299,
+    "category": "Electronics",
+    "stock": 12,
+    "image": "https://via.placeholder.com/300x220?text=Headphones"
+  },
+  {
+    "id": 3,
+    "name": "Cotton T-Shirt",
+    "description": "Soft cotton t-shirt suitable for casual wear.",
+    "price": 399,
+    "category": "Clothing",
+    "stock": 35,
+    "image": "https://via.placeholder.com/300x220?text=Cotton+T-Shirt"
+  },
+  {
+    "id": 4,
+    "name": "Denim Jacket",
+    "description": "Classic blue denim jacket with a regular fit.",
+    "price": 1799,
+    "category": "Clothing",
+    "stock": 8,
+    "image": "https://via.placeholder.com/300x220?text=Denim+Jacket"
+  },
+  {
+    "id": 5,
+    "name": "Leather Wallet",
+    "description": "Compact leather wallet with multiple card slots.",
+    "price": 699,
+    "category": "Accessories",
+    "stock": 18,
+    "image": "https://via.placeholder.com/300x220?text=Wallet"
+  },
+  {
+    "id": 6,
+    "name": "Ceramic Coffee Mug",
+    "description": "Durable ceramic mug for tea, coffee, and hot drinks.",
+    "price": 249,
+    "category": "Home",
+    "stock": 40,
+    "image": "https://via.placeholder.com/300x220?text=Coffee+Mug"
+  },
+  {
+    "id": 7,
+    "name": "Desk Lamp",
+    "description": "Adjustable desk lamp with warm LED lighting.",
+    "price": 899,
+    "category": "Home",
+    "stock": 15,
+    "image": "https://via.placeholder.com/300x220?text=Desk+Lamp"
+  },
+  {
+    "id": 8,
+    "name": "Notebook Set",
+    "description": "Pack of three ruled notebooks for school, college, or work.",
+    "price": 299,
+    "category": "Books",
+    "stock": 50,
+    "image": "https://via.placeholder.com/300x220?text=Notebook+Set"
+  },
+  {
+    "id": 9,
+    "name": "Python Basics Book",
+    "description": "Beginner-friendly book for learning Python programming.",
+    "price": 599,
+    "category": "Books",
+    "stock": 10,
+    "image": "https://via.placeholder.com/300x220?text=Python+Book"
+  },
+  {
+    "id": 10,
+    "name": "USB-C Cable",
+    "description": "Fast charging USB-C cable for compatible devices.",
+    "price": 199,
+    "category": "Electronics",
+    "stock": 60,
+    "image": "https://via.placeholder.com/300x220?text=USB-C+Cable"
+  }
+]
