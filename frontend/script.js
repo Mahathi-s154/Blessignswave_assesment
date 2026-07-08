@@ -35,6 +35,15 @@ async function loadProducts(container) {
   }
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function renderProductGrid(container, products) {
   if (!products.length) {
     container.innerHTML = '<p class="status-message">No products available.</p>';
@@ -44,12 +53,12 @@ function renderProductGrid(container, products) {
   container.innerHTML = products
     .map((product) => `
       <article class="product-card">
-        <img src="${product.image}" alt="${product.name}">
+        <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}">
         <div class="product-card-body">
-          <span class="category-pill">${product.category}</span>
-          <h3>${product.name}</h3>
-          <p class="price">₹${product.price}</p>
-          <a class="button" href="product.html?id=${product.id}">View Details</a>
+          <span class="category-pill">${escapeHtml(product.category)}</span>
+          <h3>${escapeHtml(product.name)}</h3>
+          <p class="price">₹${escapeHtml(product.price)}</p>
+          <a class="button" href="product.html?id=${encodeURIComponent(product.id)}">View Details</a>
         </div>
       </article>
     `)
@@ -87,23 +96,23 @@ async function loadProductDetail(container) {
 
 function renderProductDetail(container, product) {
   container.innerHTML = `
-    <img class="detail-image" src="${product.image}" alt="${product.name}">
+    <img class="detail-image" src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}">
     <div class="detail-content">
-      <span class="category-pill">${product.category}</span>
-      <h2>${product.name}</h2>
-      <p>${product.description}</p>
+      <span class="category-pill">${escapeHtml(product.category)}</span>
+      <h2>${escapeHtml(product.name)}</h2>
+      <p>${escapeHtml(product.description)}</p>
       <dl class="product-meta">
         <div>
           <dt>Price</dt>
-          <dd>₹${product.price}</dd>
+          <dd>₹${escapeHtml(product.price)}</dd>
         </div>
         <div>
           <dt>Category</dt>
-          <dd>${product.category}</dd>
+          <dd>${escapeHtml(product.category)}</dd>
         </div>
         <div>
           <dt>Stock</dt>
-          <dd>${product.stock}</dd>
+          <dd>${escapeHtml(product.stock)}</dd>
         </div>
       </dl>
     </div>

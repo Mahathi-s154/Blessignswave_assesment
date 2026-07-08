@@ -6,7 +6,7 @@ from typing import Any
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 app = FastAPI(title="E-commerce AI Chatbot API")
@@ -38,6 +38,14 @@ class ProductCreate(BaseModel):
     category: str = Field(..., min_length=1)
     stock: int = Field(..., ge=0)
     image: str = Field(..., min_length=1)
+
+    @field_validator("name", "description", "category", "image")
+    @classmethod
+    def text_must_not_be_blank(cls, value: str) -> str:
+        cleaned_value = value.strip()
+        if not cleaned_value:
+            raise ValueError("Field cannot be blank.")
+        return cleaned_value
 
 
 def read_json_file(path: Path) -> list[dict[str, Any]]:
