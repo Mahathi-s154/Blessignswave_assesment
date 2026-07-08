@@ -23,6 +23,19 @@
     <section id="product-grid" class="product-grid" aria-live="polite"></section>
   </main>
 
+  <section class="chat-widget" aria-label="Store assistant chat">
+    <div class="chat-header">
+      <h2>Store Assistant</h2>
+    </div>
+    <div id="chat-messages" class="chat-messages" aria-live="polite">
+      <div class="message bot-message">Ask about products, prices, stock, shipping, returns, or payment options.</div>
+    </div>
+    <form id="chat-form" class="chat-form">
+      <input id="chat-input" type="text" placeholder="Ask a question..." autocomplete="off" required>
+      <button type="submit">Send</button>
+    </form>
+  </section>
+
   <script src="script.js"></script>
 </body>
 </html>

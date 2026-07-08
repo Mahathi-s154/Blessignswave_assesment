@@ -3,6 +3,7 @@ const API_BASE_URL = "http://localhost:8000";
 document.addEventListener("DOMContentLoaded", () => {
   const productGrid = document.querySelector("#product-grid");
   const productDetail = document.querySelector("#product-detail");
+  const chatForm = document.querySelector("#chat-form");
 
   if (productGrid) {
     loadProducts(productGrid);
@@ -10,6 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (productDetail) {
     loadProductDetail(productDetail);
+  }
+
+  if (chatForm) {
+    setupChat(chatForm);
   }
 });
 
@@ -103,4 +108,55 @@ function renderProductDetail(container, product) {
       </dl>
     </div>
   `;
+}
+
+
+function setupChat(form) {
+  const input = document.querySelector("#chat-input");
+  const messages = document.querySelector("#chat-messages");
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const message = input.value.trim();
+    if (!message) {
+      return;
+    }
+
+    addChatMessage(messages, message, "user");
+    input.value = "";
+    input.focus();
+
+    const loadingMessage = addChatMessage(messages, "Thinking...", "bot");
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Chat request failed.");
+      }
+
+      loadingMessage.textContent = data.answer;
+    } catch (error) {
+      loadingMessage.textContent = error.message || "Unable to get an answer right now.";
+      loadingMessage.classList.add("error-message");
+    }
+  });
+}
+
+function addChatMessage(container, text, sender) {
+  const message = document.createElement("div");
+  message.className = `message ${sender}-message`;
+  message.textContent = text;
+  container.appendChild(message);
+  container.scrollTop = container.scrollHeight;
+  return message;
 }
