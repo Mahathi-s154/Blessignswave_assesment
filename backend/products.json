@@ -6,7 +6,7 @@
     "price": 499,
     "category": "Electronics",
     "stock": 20,
-    "image": "https://via.placeholder.com/300x220?text=Wireless+Mouse"
+    "image": "images/wireless-mouse.jpg"
   },
   {
     "id": 2,
@@ -15,7 +15,7 @@
     "price": 1299,
     "category": "Electronics",
     "stock": 12,
-    "image": "https://via.placeholder.com/300x220?text=Headphones"
+    "image": "images/bluetooth-headphones.jpg"
   },
   {
     "id": 3,
@@ -24,7 +24,7 @@
     "price": 399,
     "category": "Clothing",
     "stock": 35,
-    "image": "https://via.placeholder.com/300x220?text=Cotton+T-Shirt"
+    "image": "images/cotton-tshirt.jpg"
   },
   {
     "id": 4,
@@ -33,7 +33,7 @@
     "price": 1799,
     "category": "Clothing",
     "stock": 8,
-    "image": "https://via.placeholder.com/300x220?text=Denim+Jacket"
+    "image": "images/denim-jacket.jpg"
   },
   {
     "id": 5,
@@ -42,7 +42,7 @@
     "price": 699,
     "category": "Accessories",
     "stock": 18,
-    "image": "https://via.placeholder.com/300x220?text=Wallet"
+    "image": "images/leather-wallet.jpg"
   },
   {
     "id": 6,
@@ -51,7 +51,7 @@
     "price": 249,
     "category": "Home",
     "stock": 40,
-    "image": "https://via.placeholder.com/300x220?text=Coffee+Mug"
+    "image": "images/ceramic-coffee-mug.jpg"
   },
   {
     "id": 7,
@@ -60,7 +60,7 @@
     "price": 899,
     "category": "Home",
     "stock": 15,
-    "image": "https://via.placeholder.com/300x220?text=Desk+Lamp"
+    "image": "images/desk-lamp.jpg"
   },
   {
     "id": 8,
@@ -69,7 +69,7 @@
     "price": 299,
     "category": "Books",
     "stock": 50,
-    "image": "https://via.placeholder.com/300x220?text=Notebook+Set"
+    "image": "images/notebook-set.jpg"
   },
   {
     "id": 9,
@@ -78,7 +78,7 @@
     "price": 599,
     "category": "Books",
     "stock": 10,
-    "image": "https://via.placeholder.com/300x220?text=Python+Book"
+    "image": "images/python-basics-book.jpg"
   },
   {
     "id": 10,
@@ -87,6 +87,6 @@
     "price": 199,
     "category": "Electronics",
     "stock": 60,
-    "image": "https://via.placeholder.com/300x220?text=USB-C+Cable"
+    "image": "images/usb-c-cable.jpg"
   }
 ]
