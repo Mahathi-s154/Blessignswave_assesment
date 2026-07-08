@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const productGrid = document.querySelector("#product-grid");
   const productDetail = document.querySelector("#product-detail");
   const chatForm = document.querySelector("#chat-form");
+  const chatToggle = document.querySelector("#chat-toggle");
 
   if (productGrid) {
     loadProducts(productGrid);
@@ -13,8 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
     loadProductDetail(productDetail);
   }
 
-  if (chatForm) {
-    setupChat(chatForm);
+  if (chatForm && chatToggle) {
+    setupChat(chatForm, chatToggle);
   }
 });
 
@@ -64,7 +65,6 @@ function renderProductGrid(container, products) {
     `)
     .join("");
 }
-
 
 async function loadProductDetail(container) {
   const params = new URLSearchParams(window.location.search);
@@ -119,10 +119,27 @@ function renderProductDetail(container, product) {
   `;
 }
 
-
-function setupChat(form) {
+function setupChat(form, toggleButton) {
+  const chatWindow = document.querySelector("#chat-window");
+  const closeButton = document.querySelector("#chat-close");
   const input = document.querySelector("#chat-input");
   const messages = document.querySelector("#chat-messages");
+
+  toggleButton.addEventListener("click", () => {
+    const isOpen = !chatWindow.hidden;
+    chatWindow.hidden = isOpen;
+    toggleButton.setAttribute("aria-expanded", String(!isOpen));
+
+    if (!chatWindow.hidden) {
+      input.focus();
+    }
+  });
+
+  closeButton.addEventListener("click", () => {
+    chatWindow.hidden = true;
+    toggleButton.setAttribute("aria-expanded", "false");
+    toggleButton.focus();
+  });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -147,15 +164,14 @@ function setupChat(form) {
         body: JSON.stringify({ message }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.detail || "Chat request failed.");
+        throw new Error("Chat request failed.");
       }
 
+      const data = await response.json();
       loadingMessage.textContent = data.answer;
     } catch (error) {
-      loadingMessage.textContent = error.message || "Unable to get an answer right now.";
+      loadingMessage.textContent = "Sorry, something went wrong. Please try again.";
       loadingMessage.classList.add("error-message");
     }
   });
@@ -163,7 +179,7 @@ function setupChat(form) {
 
 function addChatMessage(container, text, sender) {
   const message = document.createElement("div");
-  message.className = `message ${sender}-message`;
+  message.className = `message ${sender}`;
   message.textContent = text;
   container.appendChild(message);
   container.scrollTop = container.scrollHeight;
