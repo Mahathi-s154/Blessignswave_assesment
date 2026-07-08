@@ -161,3 +161,31 @@ Response:
 This project intentionally uses local JSON files instead of a database to keep the assignment simple. Products are stored in `backend/products.json`, and store FAQs are stored in `backend/faqs.json`.
 
 The chatbot prompt instructs the model to answer only from the FAQ and product JSON data. It should not invent products, prices, stock, policies, discounts, or categories.
+
+## Deploying to Vercel
+
+This project is configured for Vercel with the static frontend served from `frontend/` and the FastAPI backend served under `/api`.
+
+1. Push the latest code to GitHub.
+2. In Vercel, import the GitHub repository.
+3. Keep the root directory as the repository root.
+4. Add these Environment Variables in Vercel Project Settings:
+
+```env
+GROQ_API_KEY=your_api_key_here
+GROQ_MODEL=llama-3.3-70b-versatile
+```
+
+5. Deploy the project.
+
+After deployment, test these URLs on your Vercel domain:
+
+```text
+/
+/product.html?id=1
+/api/products
+/api/products/1
+/api/chat
+```
+
+The deployed API reads product and FAQ data from local JSON files included in the repository. Adding products through `POST /api/products` on Vercel uses temporary serverless storage and is not a permanent database replacement.

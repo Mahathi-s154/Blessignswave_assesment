@@ -4,16 +4,18 @@ from pathlib import Path
 from typing import Any
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
 
 
 app = FastAPI(title="E-commerce AI Chatbot API")
+router = APIRouter()
 
 BASE_DIR = Path(__file__).resolve().parent
 PRODUCTS_FILE = BASE_DIR / "products.json"
 FAQS_FILE = BASE_DIR / "faqs.json"
+TMP_PRODUCTS_FILE = Path("/tmp/products.json")
 
 load_dotenv(BASE_DIR / ".env")
 
@@ -48,6 +50,14 @@ class ProductCreate(BaseModel):
         return cleaned_value
 
 
+class ChatRequest(BaseModel):
+    message: str = Field(..., min_length=1)
+
+
+def running_on_vercel() -> bool:
+    return os.getenv("VERCEL") == "1"
+
+
 def read_json_file(path: Path) -> list[dict[str, Any]]:
     try:
         with path.open("r", encoding="utf-8") as file:
@@ -63,41 +73,18 @@ def write_json_file(path: Path, data: list[dict[str, Any]]) -> None:
         json.dump(data, file, indent=2, ensure_ascii=False)
 
 
+def get_products_path() -> Path:
+    if not running_on_vercel():
+        return PRODUCTS_FILE
+
+    if not TMP_PRODUCTS_FILE.exists():
+        write_json_file(TMP_PRODUCTS_FILE, read_json_file(PRODUCTS_FILE))
+
+    return TMP_PRODUCTS_FILE
+
+
 def get_products() -> list[dict[str, Any]]:
-    return read_json_file(PRODUCTS_FILE)
-
-
-@app.get("/")
-def root():
-    return {"message": "E-commerce AI Chatbot API is running."}
-
-
-@app.get("/products")
-def list_products():
-    return get_products()
-
-
-@app.get("/products/{product_id}")
-def get_product(product_id: int):
-    for product in get_products():
-        if product["id"] == product_id:
-            return product
-
-    raise HTTPException(status_code=404, detail="Product not found.")
-
-
-@app.post("/products", status_code=201)
-def add_product(product: ProductCreate):
-    products = get_products()
-    next_id = max((item["id"] for item in products), default=0) + 1
-    new_product = {"id": next_id, **product.model_dump()}
-    products.append(new_product)
-    write_json_file(PRODUCTS_FILE, products)
-    return new_product
-
-
-class ChatRequest(BaseModel):
-    message: str = Field(..., min_length=1)
+    return read_json_file(get_products_path())
 
 
 def get_faqs() -> list[dict[str, Any]]:
@@ -125,7 +112,36 @@ def get_groq_client():
     return Groq(api_key=api_key)
 
 
-@app.post("/chat")
+@router.get("/")
+def root():
+    return {"message": "E-commerce AI Chatbot API is running."}
+
+
+@router.get("/products")
+def list_products():
+    return get_products()
+
+
+@router.get("/products/{product_id}")
+def get_product(product_id: int):
+    for product in get_products():
+        if product["id"] == product_id:
+            return product
+
+    raise HTTPException(status_code=404, detail="Product not found.")
+
+
+@router.post("/products", status_code=201)
+def add_product(product: ProductCreate):
+    products = get_products()
+    next_id = max((item["id"] for item in products), default=0) + 1
+    new_product = {"id": next_id, **product.model_dump()}
+    products.append(new_product)
+    write_json_file(get_products_path(), products)
+    return new_product
+
+
+@router.post("/chat")
 def chat(request: ChatRequest):
     user_message = request.message.strip()
     if not user_message:
@@ -160,3 +176,7 @@ Store data:
 
     answer = completion.choices[0].message.content
     return {"answer": answer}
+
+
+app.include_router(router)
+app.include_router(router, prefix="/api")
