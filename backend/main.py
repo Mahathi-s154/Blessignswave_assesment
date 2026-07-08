@@ -1,7 +1,9 @@
 import json
+import os
 from pathlib import Path
 from typing import Any
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -11,6 +13,9 @@ app = FastAPI(title="E-commerce AI Chatbot API")
 
 BASE_DIR = Path(__file__).resolve().parent
 PRODUCTS_FILE = BASE_DIR / "products.json"
+FAQS_FILE = BASE_DIR / "faqs.json"
+
+load_dotenv(BASE_DIR / ".env")
 
 app.add_middleware(
     CORSMiddleware,
@@ -47,7 +52,7 @@ def read_json_file(path: Path) -> list[dict[str, Any]]:
 
 def write_json_file(path: Path, data: list[dict[str, Any]]) -> None:
     with path.open("w", encoding="utf-8") as file:
-        json.dump(data, file, indent=2)
+        json.dump(data, file, indent=2, ensure_ascii=False)
 
 
 def get_products() -> list[dict[str, Any]]:
@@ -81,3 +86,69 @@ def add_product(product: ProductCreate):
     products.append(new_product)
     write_json_file(PRODUCTS_FILE, products)
     return new_product
+
+
+class ChatRequest(BaseModel):
+    message: str = Field(..., min_length=1)
+
+
+def get_faqs() -> list[dict[str, Any]]:
+    return read_json_file(FAQS_FILE)
+
+
+def build_chat_context() -> str:
+    data = {
+        "faqs": get_faqs(),
+        "products": get_products(),
+    }
+    return json.dumps(data, indent=2, ensure_ascii=False)
+
+
+def get_groq_client():
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="GROQ_API_KEY is not configured.")
+
+    try:
+        from groq import Groq
+    except ImportError as error:
+        raise HTTPException(status_code=500, detail="Groq SDK is not installed.") from error
+
+    return Groq(api_key=api_key)
+
+
+@app.post("/chat")
+def chat(request: ChatRequest):
+    user_message = request.message.strip()
+    if not user_message:
+        raise HTTPException(status_code=400, detail="Chat message cannot be empty.")
+
+    system_prompt = f'''You are a helpful e-commerce store assistant.
+You can answer only using the given FAQ data and product data.
+Do not invent products, prices, stock, policies, discounts, categories, or availability.
+If information is not available, politely say that the information is not available.
+For product-related questions, use only the products in the product data.
+If a user asks about a product that is not present, say: "Sorry, I could not find that product in our current product list."
+Use Indian rupees when mentioning prices.
+
+Store data:
+{build_chat_context()}'''.strip()
+
+    client = get_groq_client()
+    model = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+
+    try:
+        completion = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message},
+            ],
+            temperature=0.1,
+            max_tokens=350,
+        )
+    except Exception as error:
+        raise HTTPException(status_code=503, detail="AI service failed. Please try again later.") from error
+
+    answer = completion.choices[0].message.content
+    return {"answer": answer}
